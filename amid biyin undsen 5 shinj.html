@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3-р анги: Амьд биеийн үндсэн 5 шинж</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Comfortaa', cursive, sans-serif;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 40%, #e0f2fe 100%);
+            min-height: 100vh;
+        }
+        .heading-font {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+        .bouncy {
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .bouncy:hover {
+            transform: scale(1.04);
+        }
+        .bouncy:active {
+            transform: scale(0.96);
+        }
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 99;
+        }
+        .badge-glow {
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col justify-between min-h-screen">
+
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- Header Navigation Bar -->
+    <header class="bg-emerald-700 text-white shadow-xl sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-400 text-emerald-950 p-2.5 rounded-2xl shadow-md text-2xl font-black">
+                    <i class="fa-solid fa-leaf"></i>
+                </div>
+                <div>
+                    <h1 class="heading-font text-xl md:text-2xl font-bold tracking-wide">Амьд Биеийн Үндсэн 5 Шинж</h1>
+                    <p class="text-xs text-emerald-200">3-р анги: Хүн ба Байгаль / Амьд биеийн онцлогийг жишээгээр илэрхийлэх</p>
+                </div>
+            </div>
+
+            <!-- Stats Header -->
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center bg-emerald-800/80 px-3 py-1.5 rounded-xl border border-emerald-600" title="Цуглуулсан од">
+                    <i class="fa-solid fa-star text-amber-300 mr-1.5 text-lg"></i>
+                    <span id="globalStars" class="font-bold text-lg">0</span>
+                </div>
+                <div class="flex items-center bg-emerald-800/80 px-3 py-1.5 rounded-xl border border-emerald-600" title="Цуврал зөв хариулт">
+                    <i class="fa-solid fa-fire text-orange-400 mr-1.5 text-lg"></i>
+                    <span id="streakCount" class="font-bold text-lg">0</span>
+                </div>
+                <button id="soundBtn" onclick="toggleSound()" class="bg-emerald-600 hover:bg-emerald-500 p-2 rounded-xl transition text-white">
+                    <i id="soundIcon" class="fa-solid fa-volume-high"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="bg-emerald-800/50 border-t border-emerald-600/50 px-4">
+            <div class="max-w-6xl mx-auto flex overflow-x-auto space-x-2 py-2">
+                <button onclick="switchTab('learn')" id="tab-learn" class="nav-tab px-4 py-2 rounded-xl text-sm font-bold flex items-center space-x-2 bg-white text-emerald-900 shadow-md transition">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>1. 5 Шинжийг Судлах</span>
+                </button>
+                <button onclick="switchTab('match')" id="tab-match" class="nav-tab px-4 py-2 rounded-xl text-sm font-bold flex items-center space-x-2 text-white hover:bg-emerald-700/60 transition">
+                    <i class="fa-solid fa-puzzle-piece"></i>
+                    <span>2. Жишээ & Шинжийг Хослуулах</span>
+                </button>
+                <button onclick="switchTab('detective')" id="tab-detective" class="nav-tab px-4 py-2 rounded-xl text-sm font-bold flex items-center space-x-2 text-white hover:bg-emerald-700/60 transition">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>3. Амьд уу, Амьгүй юу?</span>
+                </button>
+                <button onclick="switchTab('achievements')" id="tab-achievements" class="nav-tab px-4 py-2 rounded-xl text-sm font-bold flex items-center space-x-2 text-white hover:bg-emerald-700/60 transition">
+                    <i class="fa-solid fa-trophy text-amber-300"></i>
+                    <span>4. Шагнал & Амжилт</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- TAB 1: 5 CHARACTERISTICS EXPLORATION -->
+        <section id="sec-learn" class="tab-content block space-y-6">
+            
+            <div class="glass-card rounded-3xl p-6 shadow-xl border-l-8 border-l-emerald-600 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h2 class="heading-font text-2xl font-bold text-emerald-950 flex items-center">
+                        <i class="fa-solid fa-seedling text-emerald-600 mr-3"></i>
+                        Амьд биед заавал байх 5 үндсэн шинж чанар
+                    </h2>
+                </div>
+                <p class="text-sm text-slate-600 leading-relaxed">
+                    Бидний эргэн тойронд байгаа бүх амьд биес (амьтан, ургамал, хүн, мөөг, бичил биетэн) нь дараах **5 үндсэн шинжийг** заавал агуулдаг! Карт бүр дээр дарж бодит жишээнүүдийг үзээрэй.
+                </p>
+            </div>
+
+            <!-- 5 Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="cardsGrid">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- Detail Display Area for Selected Characteristic -->
+            <div id="charDetailCard" class="glass-card rounded-3xl p-6 shadow-xl border-2 border-emerald-300 space-y-4">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+
+        <!-- TAB 2: MATCHING EXAMPLES TO CHARACTERISTICS GAME -->
+        <section id="sec-match" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 shadow-xl relative">
+                <div class="flex justify-between items-center mb-6 border-b border-slate-200 pb-4">
+                    <div>
+                        <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full uppercase">1-р Дадлага</span>
+                        <h2 class="heading-font text-2xl font-bold text-slate-800 mt-1">Бодит жишээг харгалзах шинжид нь холбоорой</h2>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-slate-500">Зөв тодорхойлсон</div>
+                        <div id="matchScoreDisplay" class="font-bold text-xl text-emerald-600">0 / 0</div>
+                    </div>
+                </div>
+
+                <div class="max-w-3xl mx-auto space-y-6">
+                    
+                    <!-- Scenario Card -->
+                    <div class="bg-slate-900 rounded-3xl p-6 text-center shadow-lg space-y-4 text-white relative overflow-hidden">
+                        <span class="bg-amber-400 text-slate-950 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">Ажиглалтын Тохиолдол</span>
+                        
+                        <div id="matchIcon" class="text-5xl text-emerald-400 my-2">
+                            <i class="fa-solid fa-fish"></i>
+                        </div>
+
+                        <div id="matchScenarioText" class="heading-font text-2xl md:text-3xl font-bold leading-relaxed px-2 text-amber-100">
+                            "Загаснууд усан дотор заламгайгаа ашиглан агаар шүүж байна."
+                        </div>
+
+                        <div class="text-xs text-slate-400 italic">Энэ жишээ нь амьд биеийн ямар шинж чанарыг илэрхийлж байна вэ?</div>
+                    </div>
+
+                    <!-- 5 Options Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="matchOptionsContainer">
+                        <!-- Injected by JS -->
+                    </div>
+
+                    <!-- Feedback Box -->
+                    <div id="matchFeedback" class="min-h-[60px] flex items-center justify-center font-bold text-sm rounded-2xl p-4 transition"></div>
+
+                    <!-- Next Button -->
+                    <button id="nextMatchBtn" onclick="generateMatchQuestion()" class="hidden w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg bouncy text-base transition">
+                        Дараагийн жишээ рүү шижих <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- TAB 3: LIVING VS NON-LIVING DETECTIVE QUIZ -->
+        <section id="sec-detective" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 shadow-xl relative">
+                <div class="flex justify-between items-center mb-6 border-b border-slate-200 pb-4">
+                    <div>
+                        <span class="bg-sky-100 text-sky-800 text-xs font-bold px-3 py-1 rounded-full uppercase">2-р Дадлага</span>
+                        <h2 class="heading-font text-2xl font-bold text-slate-800 mt-1">Амьд ба Амьгүй Биеийн Детектив</h2>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-slate-500">Оноо</div>
+                        <div id="detScoreDisplay" class="font-bold text-xl text-sky-600">0</div>
+                    </div>
+                </div>
+
+                <div class="max-w-2xl mx-auto space-y-6">
+                    
+                    <!-- Scenario Card -->
+                    <div class="bg-slate-900 rounded-3xl p-6 text-center shadow-lg space-y-4 text-white">
+                        <div id="detIcon" class="text-5xl text-sky-400">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div id="detObjectTitle" class="heading-font text-2xl md:text-3xl font-black text-amber-300">
+                            "Батерейгаар ажилладаг Тоглоон Робот"
+                        </div>
+                        <p id="detDescription" class="text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
+                            Энэ робот нь гэрэл асааж, хөгжим тоглуулан өөрийн дугуйгаар өрөө тойрон хөдөлдөг. Энэ нь амьд бие мөн үү?
+                        </p>
+                    </div>
+
+                    <!-- Detective Question Choice -->
+                    <div id="detChoiceBox" class="grid grid-cols-2 gap-4">
+                        <button onclick="submitDetectiveChoice(true)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-black heading-font text-lg py-4 rounded-2xl shadow-md bouncy flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-circle-check text-2xl"></i>
+                            <span>ТИЙМ, Амьд бие</span>
+                        </button>
+                        <button onclick="submitDetectiveChoice(false)" class="bg-rose-500 hover:bg-rose-600 text-white font-black heading-font text-lg py-4 rounded-2xl shadow-md bouncy flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-circle-xmark text-2xl"></i>
+                            <span>ҮҮГҮЙ, Амьгүй бие</span>
+                        </button>
+                    </div>
+
+                    <!-- Detective Explanation Quiz Step (Unlocks after choice) -->
+                    <div id="detExplanationBox" class="hidden bg-white border-2 border-slate-200 rounded-3xl p-5 space-y-3">
+                        <div class="font-bold text-slate-800 text-sm flex items-center">
+                            <i class="fa-solid fa-lightbulb text-amber-500 mr-2 text-lg"></i>
+                            <span id="detReasonPrompt">Яагаад амьгүй бие гэж үзсэн бэ? Шалтгааныг сонгоно уу:</span>
+                        </div>
+                        <div id="detReasonOptions" class="space-y-2">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Feedback Banner -->
+                    <div id="detFeedback" class="min-h-[50px] flex items-center justify-center font-bold text-sm rounded-2xl p-4 transition"></div>
+
+                    <!-- Next Detective Button -->
+                    <button id="nextDetBtn" onclick="generateDetectiveQuestion()" class="hidden w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg bouncy text-base transition">
+                        Дараагийн зүйлийг шинжлэх <i class="fa-solid fa-magnifying-glass ml-2"></i>
+                    </button>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- TAB 4: ACHIEVEMENTS & BADGES -->
+        <section id="sec-achievements" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 shadow-xl text-center space-y-6">
+                <div>
+                    <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Миний Амжилт</span>
+                    <h2 class="heading-font text-3xl font-black text-emerald-950 mt-2">Байгаль Шинжээчийн Медалиуд</h2>
+                    <p class="text-slate-500 text-sm">Амьд биеийн 5 шинжийг чадамгай тодорхойлон цуглуулсан амжилтууд!</p>
+                </div>
+
+                <!-- Stats Summary -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+                    <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl text-center">
+                        <i class="fa-solid fa-star text-amber-400 text-3xl mb-1"></i>
+                        <div id="statStars" class="font-extrabold text-2xl text-emerald-950">0</div>
+                        <div class="text-xs text-slate-500">Нийт Од</div>
+                    </div>
+                    <div class="bg-teal-50 border border-teal-100 p-4 rounded-2xl text-center">
+                        <i class="fa-solid fa-circle-check text-teal-500 text-3xl mb-1"></i>
+                        <div id="statCorrect" class="font-extrabold text-2xl text-teal-950">0</div>
+                        <div class="text-xs text-slate-500">Зөв Таасан</div>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-100 p-4 rounded-2xl text-center">
+                        <i class="fa-solid fa-fire text-amber-500 text-3xl mb-1"></i>
+                        <div id="statStreak" class="font-extrabold text-2xl text-amber-950">0</div>
+                        <div class="text-xs text-slate-500">Дээд Цуврал</div>
+                    </div>
+                    <div class="bg-sky-50 border border-sky-100 p-4 rounded-2xl text-center">
+                        <i class="fa-solid fa-award text-sky-500 text-3xl mb-1"></i>
+                        <div id="statBadgesCount" class="font-extrabold text-2xl text-sky-950">0 / 5</div>
+                        <div class="text-xs text-slate-500">Нээсэн Медаль</div>
+                    </div>
+                </div>
+
+                <!-- Badges Grid -->
+                <div class="max-w-3xl mx-auto pt-4">
+                    <h3 class="heading-font text-xl font-bold text-slate-800 mb-4 text-left">
+                        <i class="fa-solid fa-shield-halved text-emerald-600 mr-2"></i>Амжилтын Тэмдэгтүүд
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="badgesContainer">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-slate-200 flex justify-center">
+                    <button onclick="resetAllProgress()" class="text-xs text-slate-400 hover:text-rose-500 underline">
+                        Амжилтыг шинэчлэх (Дахин эхлэх)
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-center py-4 text-xs mt-8">
+        <p>3-р анги: Хүн ба Байгаль хичээл &copy; 2026 - Амьд биеийн үндсэн 5 шинж чанар</p>
+    </footer>
+
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* Global State */
+        let state = {
+            stars: 0,
+            streak: 0,
+            maxStreak: 0,
+            correctCount: 0,
+            soundEnabled: true,
+            selectedCharIndex: 0,
+
+            match: {
+                currentQ: null,
+                totalAttempted: 0,
+                totalCorrect: 0
+            },
+
+            detective: {
+                currentQ: null,
+                score: 0,
+                userChoice: null
+            }
+        };
+
+        // 5 Core Characteristics Data
+        const characteristicsData = [
+            {
+                id: "feed",
+                name: "1. Хооллох",
+                subtitle: "Идэш тэжээл авах",
+                icon: "fa-utensils",
+                color: "amber",
+                desc: "Амьд бие бүр амьдрах, өсөж торнихын тулд идэш тэжээл ашиглаж эрчим хүч авдаг.",
+                plantEx: "Ургамал нь наран гэрэл, ус, агаарын тусламжтайгаар өөртөө хоол тэжээл бүтээдэг.",
+                animalEx: "Бор цоохор марал өвс ургамал идэж, харин бүргэд шувуу жижиг амьтдаар хооллодог."
+            },
+            {
+                id: "breathe",
+                name: "2. Амьсгалах",
+                subtitle: "Агаараас хүчилтөрөгч авах",
+                icon: "fa-wind",
+                color: "sky",
+                desc: "Амьд бие бүр агаараас хүчилтөрөгчийг авч, нүүрсхүчлийн хийг буцаан гаргаж амьсгалдаг.",
+                plantEx: "Ургамал нь навчин дээрх бичил амсраар агаар авч амьсгалдаг.",
+                animalEx: "Хүн ба хуурай газрын амьтад уушгиар, харин загас усан дотор заламгайгаараа амьсгалдаг."
+            },
+            {
+                id: "grow",
+                name: "3. Өсөж хөгжих",
+                subtitle: "Хэмжээ томрох, өөрчлөгдөх",
+                icon: "fa-arrow-up-right-dots",
+                color: "emerald",
+                desc: "Цаг хугацааны явцад амьд биеийн бие махбод томрон өсөж, шинэ чадвартай болдог.",
+                plantEx: "Бяцхан үр хөрсөнд сойлж, ургасаар аварга том занддан мод болдог.",
+                animalEx: "Бяцхан гөлөг өссөөр ухаалаг нохой болж, өндөгний уураг дэгдээхэй болон хувирдаг."
+            },
+            {
+                id: "move",
+                name: "4. Хөдлөх",
+                subtitle: "Байрлал, хөдөлгөөн хийх",
+                icon: "fa-person-running",
+                color: "indigo",
+                desc: "Амьд биес идэш тэжээл олох, аюулаас зайлах эсвэл нар дагахын тулд хөдөлдөг.",
+                plantEx: "Наранцэцэг цэцэг өдрийн турш нарны гэрлийг даган дээшээ эргэж хөдөлдөг.",
+                animalEx: "Морь хурдан давхиж, шувуу далавчаараа нисэж, кенгуру хоёр хөлөөрөө харайдаг."
+            },
+            {
+                id: "reproduce",
+                name: "5. Үржих",
+                subtitle: "Үр ач, төл үлдээх",
+                icon: "fa-heart-pulse",
+                color: "rose",
+                desc: "Амьд биес өөртэйгөө адилхан шинэ үр ач, төл болон үр тариаг бий болгон төрлийг үргэлжлүүлдэг.",
+                plantEx: "Цэцэг үр боловсруулж, тэр үр нь салхиар тархан шинэ ургамал болон ургадаг.",
+                animalEx: "Сарлаг тугалжлах, шувуу өндөгнөөсөө дэгдээхэй гаргах, муур баавгай гөлөглөх."
+            }
+        ];
+
+        // Match Scenarios Database
+        const matchScenarios = [
+            { text: "Загаснууд усан дотор заламгайгаа ашиглан агаар шүүж байна.", icon: "fa-fish", correctCharIndex: 1 },
+            { text: "Бор цоохор марал ногоон өвс идэж байна.", icon: "fa-hippo", correctCharIndex: 0 },
+            { text: "Хөрсөнд суулгасан алимны үр сойлж, бяцхан нахиа болон ургав.", icon: "fa-seedling", correctCharIndex: 2 },
+            { text: "Наранцэцэг цэцэг өглөө нар мандахад нар руу эргэж байна.", icon: "fa-sun", correctCharIndex: 3 },
+            { text: "Ээж сарлаг хөөрхөн хужирлаг тугал төрүүлжээ.", icon: "fa-cow", correctCharIndex: 4 },
+            { text: "Хун шувуу далавчаа дэлгэн нуурын дээгүүр нисэв.", icon: "fa-crow", correctCharIndex: 3 },
+            { text: "Навч нарны гэрэл болон ус ашиглан шим тэжээл үйлдвэрлэж байна.", icon: "fa-leaf", correctCharIndex: 0 },
+            { text: "Бяцхан гөлөг 1 жилийн дотор том сэргэлэн нохой болж томорлоо.", icon: "fa-dog", correctCharIndex: 2 },
+            { text: "Шувуу үүрэндээ 3 өндөг дарж, дэгдээхэй гаргав.", icon: "fa-egg", correctCharIndex: 4 },
+            { text: "Хүн гүйхдээ гүнзгий амьсгаа авч, хүчилтөрөгч авч байна.", icon: "fa-child", correctCharIndex: 1 }
+        ];
+
+        // Detective Quiz Database (Living vs Non-living)
+        const detectiveDatabase = [
+            {
+                title: "Батерейгаар ажилладаг Тоглоон Робот",
+                icon: "fa-robot",
+                isLiving: false,
+                desc: "Энэ робот нь гэрэл асааж, хөгжим тоглуулан өөрөө өрөө тойрон хөдөлдөг.",
+                reasons: [
+                    { text: "Хооллож амьсгалдаггүй, үржиж өсдөггүй тул амьгүй бие юм.", correct: true },
+                    { text: "Хөдөлж байгаа учраас амьд бие юм.", correct: false },
+                    { text: "Батерейтай учраас хооллож байна гэсэн үг.", correct: false }
+                ]
+            },
+            {
+                title: "Тасалгааны Ногоон Даваа цэцэг",
+                icon: "fa-plant-wilt",
+                isLiving: true,
+                desc: "Энэ цэцэг цонхны тавцан дээр байх бөгөөд услахгүй бол хатаж, арчилбал өсөж цэцэглэдэг.",
+                reasons: [
+                    { text: "Агаар авч, ус шим тэжээлээр хооллон өсдөг тул амьд бие юм.", correct: true },
+                    { text: "Гүйж хөдөлдөггүй тул амьгүй бие юм.", correct: false },
+                    { text: "Цонхон дээр байдаг тул заавал амьгүй бие байна.", correct: false }
+                ]
+            },
+            {
+                title: "Салхинд хийсэн өнхөрч буй Хамхуул",
+                icon: "fa-wind",
+                isLiving: false,
+                desc: "Салхи гарахад хөдөө талд хамхуул маш хурдан өнхрөн хөдөлдөг.",
+                reasons: [
+                    { text: "Салхины хүчээр гаднаас хөдөлж байгаа бөгөөд амьсгалж үржихгүй тул амьгүй бие.", correct: true },
+                    { text: "Морь шиг хурдан хөдөлж байгаа тул амьд бие.", correct: false },
+                    { text: "Хөдөө талд байгаа учраас заавал амьд бие.", correct: false }
+                ]
+            },
+            {
+                title: "Нууранд сэргэлэн сөлж буй Хатан Загас",
+                icon: "fa-fish-fins",
+                isLiving: true,
+                desc: "Усан дотор сүүлээ шарван сэргэлэн сөлж, жижиг замаг болон хорхой идэж байна.",
+                reasons: [
+                    { text: "Амьсгалдаг, хооллодог, хөдөлдөг, өсдөг, үрждэг тул амьд бие юм.", correct: true },
+                    { text: "Усан дотор байдаг тул амьгүй бие.", correct: false },
+                    { text: "Яриад байдаггүй тул амьгүй бие.", correct: false }
+                ]
+            },
+            {
+                title: "Тэнгэрт цойлж буй Уурын Ижил Онгоц",
+                icon: "fa-plane",
+                isLiving: false,
+                desc: "Онгоц нь түлш шатааж, агаарт маш өндөрт нисэж, дуу гаргадаг.",
+                reasons: [
+                    { text: "Хүн бүтээсэн, түлш ашигладаг боловч амьсгалж, үржин өсдөггүй тул амьгүй бие.", correct: true },
+                    { text: "Нисэж байгаа тул шувуу шиг амьд бие.", correct: false },
+                    { text: "Дуу гаргадаг учраас заавал амьд бие.", correct: false }
+                ]
+            }
+        ];
+
+        // Badges Definition
+        const badgesDef = [
+            { id: "b1", title: "Байгаль Шинжээч", desc: "Амьд биеийн 5 шинжийг анхлан судаллаа", icon: "fa-leaf", req: s => s.correctCount >= 1 },
+            { id: "b2", title: "Ажиглагч Багаажаа", desc: "5 удаа жишээг зөв харгалдуулав", icon: "fa-eye", req: s => s.correctCount >= 5 },
+            { id: "b3", title: "Амьд ба Амьгүй Мастер", desc: "Детектив асуултад 3 удаа алдаагүй хариуллаа", icon: "fa-magnifying-glass", req: s => s.maxStreak >= 3 },
+            { id: "b4", title: "Онцлог Ялгагч", desc: "10-аас дээш зөв таавар таалаа", icon: "fa-puzzle-piece", req: s => s.correctCount >= 10 },
+            { id: "b5", title: "Байгалийн Баатар", desc: "Нийт 50-иас дээш Од цуглууллаа", icon: "fa-trophy", req: s => s.stars >= 50 }
+        ];
+
+        /* Sound Synthesizer (Web Audio API) */
+        let audioCtx = null;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            if (!state.soundEnabled) return;
+            try {
+                initAudio();
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(480, now);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.1); // E5
+                    osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.2); // G5
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'wrong') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(220, now); // A3
+                    osc.frequency.exponentialRampToValueAtTime(160, now + 0.2);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'fanfare') {
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.frequency.value = freq;
+                        g.gain.setValueAtTime(0.15, now + idx * 0.1);
+                        g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.3);
+                        o.start(now + idx * 0.1);
+                        o.stop(now + idx * 0.1 + 0.3);
+                    });
+                }
+            } catch(e) { console.log(e); }
+        }
+
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            icon.className = state.soundEnabled ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark';
+        }
+
+        /* Navigation Tab Switcher */
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('bg-white', 'text-emerald-900', 'shadow-md');
+                btn.classList.add('text-white', 'hover:bg-emerald-700/60');
+            });
+
+            document.getElementById(`sec-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            activeBtn.classList.add('bg-white', 'text-emerald-900', 'shadow-md');
+            activeBtn.classList.remove('text-white', 'hover:bg-emerald-700/60');
+
+            if (tabId === 'match' && state.match.totalAttempted === 0) {
+                generateMatchQuestion();
+            } else if (tabId === 'detective' && !state.detective.currentQ) {
+                generateDetectiveQuestion();
+            } else if (tabId === 'achievements') {
+                renderAchievements();
+            }
+        }
+
+
+        /* MODULE 1: EXPLORE 5 CHARACTERISTICS */
+        function renderExplorationModule() {
+            const grid = document.getElementById('cardsGrid');
+            grid.innerHTML = '';
+
+            characteristicsData.forEach((item, index) => {
+                const card = document.createElement('div');
+                const isSelected = index === state.selectedCharIndex;
+                
+                card.className = `glass-card rounded-2xl p-4 text-center cursor-pointer bouncy transition border-2 ${
+                    isSelected ? 'border-emerald-500 bg-emerald-50/90 shadow-lg scale-105' : 'border-white hover:border-emerald-300'
+                }`;
+
+                card.onclick = () => {
+                    playSound('click');
+                    state.selectedCharIndex = index;
+                    renderExplorationModule();
+                };
+
+                card.innerHTML = `
+                    <div class="w-12 h-12 mx-auto rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl font-black mb-2">
+                        <i class="fa-solid ${item.icon}"></i>
+                    </div>
+                    <div class="heading-font font-bold text-slate-800 text-sm">${item.name}</div>
+                    <div class="text-[11px] text-slate-500 mt-1">${item.subtitle}</div>
+                `;
+
+                grid.appendChild(card);
+            });
+
+            // Display Detailed Card
+            const selected = characteristicsData[state.selectedCharIndex];
+            const detailBox = document.getElementById('charDetailCard');
+            detailBox.innerHTML = `
+                <div class="flex items-center space-x-3 border-b border-slate-200 pb-3">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-2xl font-black">
+                        <i class="fa-solid ${selected.icon}"></i>
+                    </div>
+                    <div>
+                        <h3 class="heading-font text-2xl font-bold text-emerald-950">${selected.name}</h3>
+                        <p class="text-xs text-slate-500 font-bold">${selected.subtitle}</p>
+                    </div>
+                </div>
+
+                <p class="text-sm text-slate-700 leading-relaxed font-semibold bg-white p-3 rounded-xl border border-slate-200">
+                    <i class="fa-solid fa-quote-left text-emerald-400 mr-2"></i> ${selected.desc}
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 space-y-2">
+                        <div class="flex items-center space-x-2 text-emerald-900 font-bold heading-font text-sm">
+                            <i class="fa-solid fa-seedling text-emerald-600 text-lg"></i>
+                            <span>Ургамлын жишээ:</span>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed">${selected.plantEx}</p>
+                    </div>
+
+                    <div class="bg-sky-50 border border-sky-200 rounded-2xl p-4 space-y-2">
+                        <div class="flex items-center space-x-2 text-sky-900 font-bold heading-font text-sm">
+                            <i class="fa-solid fa-paw text-sky-600 text-lg"></i>
+                            <span>Амьтны жишээ:</span>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed">${selected.animalEx}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+
+        /* MODULE 2: MATCHING GAME */
+        function generateMatchQuestion() {
+            document.getElementById('nextMatchBtn').classList.add('hidden');
+            const fb = document.getElementById('matchFeedback');
+            fb.className = 'min-h-[60px] flex items-center justify-center font-bold text-sm rounded-2xl p-4 transition';
+            fb.innerHTML = '';
+
+            // Pick random scenario
+            const randomIdx = Math.floor(Math.random() * matchScenarios.length);
+            const scenario = matchScenarios[randomIdx];
+            state.match.currentQ = scenario;
+
+            document.getElementById('matchIcon').innerHTML = `<i class="fa-solid ${scenario.icon}"></i>`;
+            document.getElementById('matchScenarioText').textContent = `"${scenario.text}"`;
+
+            // Render 5 characteristic options
+            const container = document.getElementById('matchOptionsContainer');
+            container.innerHTML = '';
+
+            characteristicsData.forEach((item, index) => {
+                const btn = document.createElement('button');
+                btn.className = "bg-white hover:bg-emerald-50 border-2 border-emerald-200 text-emerald-950 font-bold heading-font text-sm p-4 rounded-2xl shadow-sm bouncy transition flex items-center space-x-3";
+                
+                btn.onclick = () => submitMatchAnswer(index);
+                btn.innerHTML = `
+                    <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                        <i class="fa-solid ${item.icon}"></i>
+                    </div>
+                    <span class="text-left">${item.name}</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function submitMatchAnswer(chosenIndex) {
+            if (!state.match.currentQ) return;
+
+            state.match.totalAttempted++;
+            const correctIndex = state.match.currentQ.correctCharIndex;
+            const isCorrect = chosenIndex === correctIndex;
+            const fb = document.getElementById('matchFeedback');
+
+            if (isCorrect) {
+                playSound('correct');
+                state.match.totalCorrect++;
+                state.stars += 10;
+                state.streak++;
+                state.correctCount++;
+                if (state.streak > state.maxStreak) state.maxStreak = state.streak;
+
+                const correctName = characteristicsData[correctIndex].name;
+                fb.className = "bg-emerald-100 text-emerald-900 border border-emerald-300 rounded-2xl p-4 text-center font-bold";
+                fb.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-2 text-lg"></i> МАШ САЙН! Энэ нь амьд биеийн <b>"${correctName}"</b> шинж чанарыг харуулсан жишээ мөн. (+10 Од)`;
+            } else {
+                playSound('wrong');
+                state.streak = 0;
+                const correctName = characteristicsData[correctIndex].name;
+                fb.className = "bg-rose-100 text-rose-900 border border-rose-300 rounded-2xl p-4 text-center font-bold";
+                fb.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 mr-2 text-lg"></i> Дөхлөө! Зөв хариу нь <b>"${correctName}"</b> шинж байлаа. Дахин сайн ажиглаарай!`;
+            }
+
+            state.match.currentQ = null; // Lock further clicks
+            updateGlobalStats();
+            document.getElementById('nextMatchBtn').classList.remove('hidden');
+        }
+
+
+        /* MODULE 3: LIVING VS NON-LIVING DETECTIVE QUIZ */
+        function generateDetectiveQuestion() {
+            document.getElementById('nextDetBtn').classList.add('hidden');
+            document.getElementById('detExplanationBox').classList.add('hidden');
+            document.getElementById('detChoiceBox').classList.remove('hidden');
+
+            const fb = document.getElementById('detFeedback');
+            fb.className = 'min-h-[50px] flex items-center justify-center font-bold text-sm rounded-2xl p-4 transition';
+            fb.innerHTML = '';
+
+            const randomIdx = Math.floor(Math.random() * detectiveDatabase.length);
+            const q = detectiveDatabase[randomIdx];
+            state.detective.currentQ = q;
+            state.detective.userChoice = null;
+
+            document.getElementById('detIcon').innerHTML = `<i class="fa-solid ${q.icon}"></i>`;
+            document.getElementById('detObjectTitle').textContent = `"${q.title}"`;
+            document.getElementById('detDescription').textContent = q.desc;
+        }
+
+        function submitDetectiveChoice(userChoice) {
+            playSound('click');
+            state.detective.userChoice = userChoice;
+            const q = state.detective.currentQ;
+
+            document.getElementById('detChoiceBox').classList.add('hidden');
+            const expBox = document.getElementById('detExplanationBox');
+            expBox.classList.remove('hidden');
+
+            const prompt = document.getElementById('detReasonPrompt');
+            prompt.textContent = userChoice ? "Яагаад АМЬД БИЕ гэж үзсэн бэ? Шалтгааныг сонгоно уу:" : "Яагаад АМЬГҮЙ БИЕ гэж үзсэн бэ? Шалтгааныг сонгоно уу:";
+
+            const container = document.getElementById('detReasonOptions');
+            container.innerHTML = '';
+
+            // Shuffle reasons
+            const reasonsShuffled = [...q.reasons].sort(() => Math.random() - 0.5);
+
+            reasonsShuffled.forEach(reason => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left bg-slate-50 hover:bg-sky-50 border-2 border-slate-200 text-slate-800 font-bold p-3 rounded-xl bouncy transition text-xs flex items-center space-x-2";
+                btn.onclick = () => submitDetectiveReason(reason.correct);
+                btn.innerHTML = `<i class="fa-solid fa-circle text-[8px] text-sky-500"></i><span>${reason.text}</span>`;
+                container.appendChild(btn);
+            });
+        }
+
+        function submitDetectiveReason(isReasonCorrect) {
+            const q = state.detective.currentQ;
+            const choiceCorrect = state.detective.userChoice === q.isLiving;
+            const isFullyCorrect = choiceCorrect && isReasonCorrect;
+
+            const fb = document.getElementById('detFeedback');
+
+            if (isFullyCorrect) {
+                playSound('correct');
+                state.stars += 15;
+                state.streak++;
+                state.correctCount++;
+                state.detective.score += 10;
+                if (state.streak > state.maxStreak) state.maxStreak = state.streak;
+
+                fb.className = "bg-emerald-100 text-emerald-900 border border-emerald-300 rounded-2xl p-4 text-center font-bold";
+                fb.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-2 text-lg"></i> ЯГ ЗӨВ ДЕТЕКТИВ МӨН! Шалтгааныг маш зөв тайлбарлаж чадлаа. (+15 Од)`;
+            } else {
+                playSound('wrong');
+                state.streak = 0;
+                fb.className = "bg-rose-100 text-rose-900 border border-rose-300 rounded-2xl p-4 text-center font-bold";
+                
+                const correctType = q.isLiving ? "АМЬД БИЕ" : "АМЬГҮЙ БИЕ";
+                fb.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 mr-2 text-lg"></i> Зөв хариулт нь: Энэ бол <b>${correctType}</b> юм. Амьд биеийн 5 шинж (хооллох, амьсгалах, өсөх, хөдлөх, үржих) бүгд байгаа эсэхийг шалгаарай!`;
+            }
+
+            document.getElementById('detExplanationBox').classList.add('hidden');
+            updateGlobalStats();
+            document.getElementById('nextDetBtn').classList.remove('hidden');
+        }
+
+
+        /* GLOBAL STATS & ACHIEVEMENTS */
+        function updateGlobalStats() {
+            document.getElementById('globalStars').textContent = state.stars;
+            document.getElementById('streakCount').textContent = state.streak;
+            document.getElementById('matchScoreDisplay').textContent = `${state.match.totalCorrect} / ${state.match.totalAttempted}`;
+            document.getElementById('detScoreDisplay').textContent = state.detective.score;
+        }
+
+        function renderAchievements() {
+            document.getElementById('statStars').textContent = state.stars;
+            document.getElementById('statCorrect').textContent = state.correctCount;
+            document.getElementById('statStreak').textContent = state.maxStreak;
+
+            let unlockedCount = 0;
+            const container = document.getElementById('badgesContainer');
+            container.innerHTML = '';
+
+            badgesDef.forEach(b => {
+                const unlocked = b.req(state);
+                if (unlocked) unlockedCount++;
+
+                const badgeCard = document.createElement('div');
+                
+                if (unlocked) {
+                    badgeCard.className = 'bg-white border-2 border-amber-300 rounded-2xl p-4 flex items-center space-x-3 shadow-md relative overflow-hidden badge-glow';
+                    badgeCard.innerHTML = `
+                        <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl font-black shrink-0">
+                            <i class="fa-solid ${b.icon}"></i>
+                        </div>
+                        <div class="text-left">
+                            <div class="font-extrabold text-slate-800 text-sm">${b.title}</div>
+                            <div class="text-xs text-slate-500 mt-0.5">${b.desc}</div>
+                            <span class="inline-block mt-1 text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">Авсан <i class="fa-solid fa-check"></i></span>
+                        </div>
+                    `;
+                } else {
+                    badgeCard.className = 'bg-slate-100 border-2 border-slate-200 rounded-2xl p-4 flex items-center space-x-3 opacity-60 grayscale';
+                    badgeCard.innerHTML = `
+                        <div class="w-12 h-12 rounded-2xl bg-slate-200 text-slate-500 flex items-center justify-center text-2xl font-black shrink-0">
+                            <i class="fa-solid ${b.icon}"></i>
+                        </div>
+                        <div class="text-left">
+                            <div class="font-bold text-slate-700 text-sm">${b.title}</div>
+                            <div class="text-xs text-slate-500 mt-0.5">${b.desc}</div>
+                            <span class="inline-block mt-1 text-[10px] bg-slate-200 text-slate-600 font-bold px-2 py-0.5 rounded-full">Түгжээтэй</span>
+                        </div>
+                    `;
+                }
+                container.appendChild(badgeCard);
+            });
+
+            document.getElementById('statBadgesCount').textContent = `${unlockedCount} / ${badgesDef.length}`;
+        }
+
+        function resetAllProgress() {
+            state.stars = 0;
+            state.streak = 0;
+            state.maxStreak = 0;
+            state.correctCount = 0;
+            state.match.totalAttempted = 0;
+            state.match.totalCorrect = 0;
+            state.detective.score = 0;
+
+            updateGlobalStats();
+            renderAchievements();
+        }
+
+        /* CONFETTI SYSTEM */
+        function triggerConfetti() {
+            const canvas = document.getElementById('confettiCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#10b981', '#38bdf8', '#f59e0b', '#3b82f6', '#ec4899'];
+
+            for (let i = 0; i < 75; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 14,
+                    vy: (Math.random() - 0.7) * 14,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    life: 90
+                });
+            }
+
+            let animId;
+            function render() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let alive = false;
+
+                particles.forEach(p => {
+                    if (p.life > 0) {
+                        alive = true;
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vy += 0.25;
+                        p.life--;
+
+                        ctx.fillStyle = p.color;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                });
+
+                if (alive) {
+                    animId = requestAnimationFrame(render);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    cancelAnimationFrame(animId);
+                }
+            }
+            render();
+        }
+
+        /* INITIALIZATION */
+        window.onload = function() {
+            renderExplorationModule();
+            updateGlobalStats();
+        };
+    </script>
+</body>
+</html>
